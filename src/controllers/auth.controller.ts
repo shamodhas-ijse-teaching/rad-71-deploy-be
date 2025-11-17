@@ -3,6 +3,12 @@ import { IUser, Role, Status, User } from "../models/User"
 import bcrypt from "bcryptjs"
 import { signAccessToken, signRefreshToken } from "../utils/tokens"
 import { AuthRequest } from "../middleware/auth"
+import jwt from "jsonwebtoken"
+import dotenv from "dotenv"
+import { json } from "stream/consumers"
+dotenv.config()
+
+const JWT_REFRESH_SECRET = process.env.JWT_REFRESH_SECRET as string
 
 export const register = async (req: Request, res: Response) => {
   try {
@@ -112,8 +118,21 @@ export const getMyDetails = async (req: AuthRequest, res: Response) => {
 export const registerAdmin = (req: Request, res: Response) => {}
 
 export const handleRefreshToken = async (req: Request, res: Response) => {
-try{}catch(err){
-  // res.status(500).json({message:""})
-}
-
+  try {
+    const { token } = req.body
+    if (!token) {
+      return res.status(400).json({ message: "Token required" })
+    }
+    // import jwt from "jsonwebtoken"
+    const payload = jwt.verify(token, JWT_REFRESH_SECRET)
+    // payload.sub - userID
+    const user = await User.findById(payload.sub)
+    if (!user) {
+      return res.status(403).json({ message: "Invalid refresh token" })
+    }
+    const accessToken = signAccessToken(user)
+    res.status(200).json({ accessToken })
+  } catch (err) {
+    res.status(403).json({ message: "Invalid or expire token" })
+  }
 }
