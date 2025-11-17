@@ -1,7 +1,7 @@
 import { Request, Response } from "express"
 import { IUser, Role, Status, User } from "../models/User"
 import bcrypt from "bcryptjs"
-import { signAccessToken } from "../utils/tokens"
+import { signAccessToken, signRefreshToken } from "../utils/tokens"
 import { AuthRequest } from "../middleware/auth"
 
 export const register = async (req: Request, res: Response) => {
@@ -70,13 +70,15 @@ export const login = async (req: Request, res: Response) => {
     }
 
     const accessToken = signAccessToken(existingUser)
+    const refreshToken = signRefreshToken(existingUser) // this
 
     res.status(200).json({
       message: "success",
       data: {
         email: existingUser.email,
         roles: existingUser.roles,
-        accessToken
+        accessToken,
+        refreshToken // this
       }
     })
   } catch (err: any) {
@@ -108,3 +110,10 @@ export const getMyDetails = async (req: AuthRequest, res: Response) => {
 }
 
 export const registerAdmin = (req: Request, res: Response) => {}
+
+export const handleRefreshToken = async (req: Request, res: Response) => {
+try{}catch(err){
+  // res.status(500).json({message:""})
+}
+
+}
