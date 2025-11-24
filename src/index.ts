@@ -22,6 +22,10 @@ app.use(
 app.use("/api/v1/auth", authRouter)
 app.use("/api/v1/post", postRouter)
 
+app.get("/", (req, res) => {
+  res.send("Backend is running...")
+})
+
 mongoose
   .connect(MONGO_URI)
   .then(() => {
