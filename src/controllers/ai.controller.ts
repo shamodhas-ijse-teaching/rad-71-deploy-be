@@ -21,7 +21,7 @@ export const genrateContent = async (req: Request, res: Response) => {
       {
         headers: {
           "Content-Type": "application/json",
-          "X-goog-api-key": "AIzaSyDW8VQ0DOC602N9pFL5xtd3jUkmeb51SxM"
+          "X-goog-api-key": ""
         }
       }
     )
